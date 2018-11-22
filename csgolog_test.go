@@ -869,25 +869,41 @@ func TestMessages(t *testing.T) {
 
 func TestToJSON(t *testing.T) {
 
-	// given
-	m, _ := Parse(line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`))
-	expected := strip(`{
-		"time": "2018-11-05T15:44:36Z",
-		"type": "PlayerPurchase",
-		"player": {
-			"name": 		"Player",
-			"id": 			12,
-			"steam_id": "STEAM_1:1:0101011",
-			"side": 		"TERRORIST"
-		},
-		"item": "m4a1"
-	}`)
+	t.Run("Message to json", func(t *testing.T) {
 
-	// when
-	data := strip(ToJSON(m))
+		// given
+		m, _ := Parse(line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`))
+		expected := strip(`{
+				"time": "2018-11-05T15:44:36Z",
+				"type": "PlayerPurchase",
+				"player": {
+					"name": 		"Player",
+					"id": 			12,
+					"steam_id": "STEAM_1:1:0101011",
+					"side": 		"TERRORIST"
+				},
+				"item": "m4a1"
+			}`)
 
-	// then
-	assert(t, expected, data)
+		// when
+		jsn := strip(ToJSON(m))
+
+		// then
+		assert(t, expected, jsn)
+	})
+
+	t.Run("nil Message to json", func(t *testing.T) {
+
+		// given
+		var m Message
+
+		// when
+		jsn := ToJSON(m)
+
+		// then
+		assert(t, "null", strip(jsn))
+	})
+
 }
 
 func TestParse(t *testing.T) {
