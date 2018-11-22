@@ -343,7 +343,7 @@ const (
 	// PlayerKillAssistPattern regular expression
 	PlayerKillAssistPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" assisted killing "(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>"`
 	// PlayerAttackPattern regular expression
-	PlayerAttackPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" \[(-?\d+) (-?\d+) (-?\d+)\] attacked "(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" \[(-?\d+) (-?\d+) (-?\d+)\] with "(\w+)" \(damage "(\d+)"\) \(damage_armor "(\d+)"\) \(health "(\d+)"\) \(armor "(\d+)"\) \(hitgroup "(\w+)"\)`
+	PlayerAttackPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" \[(-?\d+) (-?\d+) (-?\d+)\] attacked "(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" \[(-?\d+) (-?\d+) (-?\d+)\] with "(\w+)" \(damage "(\d+)"\) \(damage_armor "(\d+)"\) \(health "(\d+)"\) \(armor "(\d+)"\) \(hitgroup "([\w ]+)"\)`
 	// PlayerKilledBombPattern regular expression
 	PlayerKilledBombPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" \[(-?\d+) (-?\d+) (-?\d+)\] was killed by the bomb\.`
 	// PlayerKilledSuicidePattern regular expression
@@ -351,7 +351,7 @@ const (
 	// PlayerPickedUpPattern regular expression - https://regexr.com/43i5d
 	PlayerPickedUpPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" picked up "(\w+)"`
 	// PlayerDroppedPattern regular expression - https://regexr.com/43i5d
-	PlayerDroppedPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" dropped "(\w+)"`
+	PlayerDroppedPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT|Unassigned)>" dropped "(\w+)"`
 	// PlayerMoneyChangePattern regular expression  - https://regexr.com/43i57
 	PlayerMoneyChangePattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" money change (\d+)\+?(-?\d+) = \$(\d+) \(tracked\)( \(purchase: (\w+)\))?`
 	// PlayerBombGotPattern regular expression
