@@ -322,7 +322,7 @@ const (
 	WorldGameCommencingPattern = `World triggered "Game_Commencing"`
 	// TeamScoredPattern regular expression
 	TeamScoredPattern = `Team "(CT|TERRORIST)" scored "(\d+)" with "(\d+)" players`
-	// TeamNoticePattern regular expression - https://regexr.com/43i5s
+	// TeamNoticePattern regular expression
 	TeamNoticePattern = `Team "(CT|TERRORIST)" triggered "(\w+)" \(CT "(\d+)"\) \(T "(\d+)"\)`
 	// PlayerConnectedPattern regular expression
 	PlayerConnectedPattern = `"(\w+)<(\d+)><([\w:]+)><>" connected, address "(.*)"`
@@ -348,11 +348,11 @@ const (
 	PlayerKilledBombPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" \[(-?\d+) (-?\d+) (-?\d+)\] was killed by the bomb\.`
 	// PlayerKilledSuicidePattern regular expression
 	PlayerKilledSuicidePattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" \[(-?\d+) (-?\d+) (-?\d+)\] committed suicide with "(.*)"`
-	// PlayerPickedUpPattern regular expression - https://regexr.com/43i5d
+	// PlayerPickedUpPattern regular expression
 	PlayerPickedUpPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" picked up "(\w+)"`
-	// PlayerDroppedPattern regular expression - https://regexr.com/43i5d
+	// PlayerDroppedPattern regular expression
 	PlayerDroppedPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT|Unassigned)>" dropped "(\w+)"`
-	// PlayerMoneyChangePattern regular expression  - https://regexr.com/43i57
+	// PlayerMoneyChangePattern regular expression
 	PlayerMoneyChangePattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" money change (\d+)\+?(-?\d+) = \$(\d+) \(tracked\)( \(purchase: (\w+)\))?`
 	// PlayerBombGotPattern regular expression
 	PlayerBombGotPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" triggered "Got_The_Bomb"`
@@ -368,7 +368,7 @@ const (
 	PlayerThrewPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" threw (\w+) \[(-?\d+) (-?\d+) (-?\d+)\]( flashbang entindex (\d+))?\)?`
 	// PlayerBlindedPattern regular expression
 	PlayerBlindedPattern = `"(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" blinded for ([\d.]+) by "(\w+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" from flashbang entindex (\d+)`
-	// ProjectileSpawnedPattern regular expression - https://regexr.com/43i5s
+	// ProjectileSpawnedPattern regular expression
 	ProjectileSpawnedPattern = `Molotov projectile spawned at (-?\d+\.\d+) (-?\d+\.\d+) (-?\d+\.\d+), velocity (-?\d+\.\d+) (-?\d+\.\d+) (-?\d+\.\d+)`
 	// GameOverPattern regular expression
 	GameOverPattern = `Game Over: (\w+) (\w+) (\w+) score (\d+):(\d+) after (\d+) min`
