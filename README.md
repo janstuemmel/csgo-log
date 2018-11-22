@@ -14,7 +14,7 @@ package main
 import (
   "fmt"
 
-  "github.com/janstuemmel/csgolog"
+  "github.com/janstuemmel/csgo-log"
 )
 
 func main() {
