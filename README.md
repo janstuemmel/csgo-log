@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/janstuemmel/csgo-log.svg?branch=master)](https://travis-ci.org/janstuemmel/csgo-log)
+
 # csgo-log
 
 Go package for parsing csgo server logfiles.
