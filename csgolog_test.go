@@ -7,6 +7,55 @@ import (
 	"time"
 )
 
+func TestExample(t *testing.T) {
+
+	var msg Message // csgolog.Message outside of package scope
+
+	// a line from a server logfile
+	line := `L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`
+
+	// parse into Message
+	msg, err := Parse(line) // csgolog.Parse(line)
+
+	if err != nil {
+		panic(err)
+	}
+
+	// fmt.Println(msg.GetType(), msg.GetTime().String())
+	assert(t, "PlayerPurchase", msg.GetType())
+	assert(t, "2018-11-05 15:44:36 +0000 UTC", msg.GetTime().String())
+
+	// cast Message interface to PlayerPurchase type
+	playerPurchase, ok := msg.(PlayerPurchase)
+
+	if ok != true {
+		panic("casting failed")
+	}
+
+	// fmt.Println(playerPurchase.Player.SteamID)
+	// fmt.Println(playerPurchase.Item)
+	assert(t, "STEAM_1:1:0101011", playerPurchase.Player.SteamID)
+	assert(t, "m4a1", playerPurchase.Item)
+
+	// get json non-htmlescaped
+	jsn := ToJSON(msg) // csgolog.ToJSON(msg)
+
+	// fmt.Println(jsn)
+	assert(t, strip(`
+	{
+		"time": "2018-11-05T15:44:36Z",
+		"type": "PlayerPurchase",
+		"player": {
+			"name": "Player",
+			"id": 12,
+			"steam_id": "STEAM_1:1:0101011",
+			"side": "CT"
+		},
+		"item": "m4a1"
+	}
+	`), strip(jsn))
+}
+
 func TestMessages(t *testing.T) {
 
 	t.Run("Unknown", func(t *testing.T) {
