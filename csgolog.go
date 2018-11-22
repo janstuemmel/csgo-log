@@ -64,6 +64,15 @@ type (
 		Type string    `json:"type"`
 	}
 
+	// ServerMessage is received on a server event
+	ServerMessage struct {
+		Meta
+		Text string `json:"text"`
+	}
+
+	// FreezTimeStart is received before each round
+	FreezTimeStart struct{ Meta }
+
 	// WorldMatchStart holds the map wich will be played when match starts
 	WorldMatchStart struct {
 		Meta
@@ -72,6 +81,12 @@ type (
 
 	// WorldRoundStart message is received when a new round starts
 	WorldRoundStart struct{ Meta }
+
+	// WorldRoundRestart is received when the server wants to restart a round
+	WorldRoundRestart struct {
+		Meta
+		Timeleft int `json:"timeleft"`
+	}
 
 	// WorldRoundEnd message is received when a round ends
 	WorldRoundEnd struct{ Meta }
@@ -312,10 +327,16 @@ func (m Meta) GetTime() time.Time {
 type messageFunc func(ti time.Time, r []string) Message
 
 const (
+	// ServerMessagePattern regular expression
+	ServerMessagePattern = `server_message: "(\w+)"`
+	// FreezTimeStartPattern regular expression
+	FreezTimeStartPattern = `Starting Freeze period`
 	// WorldMatchStartPattern regular expression
 	WorldMatchStartPattern = `World triggered "Match_Start" on "(\w+)"`
 	// WorldRoundStartPattern regular expression
 	WorldRoundStartPattern = `World triggered "Round_Start"`
+	// WorldRoundRestartPattern regular expression
+	WorldRoundRestartPattern = `World triggered "Restart_Round_\((\d+)_second\)`
 	// WorldRoundEndPattern regular expression
 	WorldRoundEndPattern = `World triggered "Round_End"`
 	// WorldGameCommencingPattern regular expression
@@ -375,8 +396,11 @@ const (
 )
 
 var patterns = map[*regexp.Regexp]messageFunc{
+	regexp.MustCompile(ServerMessagePattern):         newServerMessage,
+	regexp.MustCompile(FreezTimeStartPattern):        newFreezTimeStart,
 	regexp.MustCompile(WorldMatchStartPattern):       newWorldMatchStart,
 	regexp.MustCompile(WorldRoundStartPattern):       newWorldRoundStart,
+	regexp.MustCompile(WorldRoundRestartPattern):     newWorldRoundRestart,
 	regexp.MustCompile(WorldRoundEndPattern):         newWorldRoundEnd,
 	regexp.MustCompile(WorldGameCommencingPattern):   newWorldGameCommencing,
 	regexp.MustCompile(TeamScoredPattern):            newTeamScored,
@@ -455,6 +479,17 @@ func newMeta(ti time.Time, ty string) Meta {
 	}
 }
 
+func newServerMessage(ti time.Time, r []string) Message {
+	return ServerMessage{
+		Meta: newMeta(ti, "ServerMessage"),
+		Text: r[1],
+	}
+}
+
+func newFreezTimeStart(ti time.Time, r []string) Message {
+	return FreezTimeStart{newMeta(ti, "FreezTimeStart")}
+}
+
 func newWorldMatchStart(ti time.Time, r []string) Message {
 	return WorldMatchStart{
 		Meta: newMeta(ti, "WorldMatchStart"),
@@ -464,6 +499,13 @@ func newWorldMatchStart(ti time.Time, r []string) Message {
 
 func newWorldRoundStart(ti time.Time, r []string) Message {
 	return WorldRoundStart{newMeta(ti, "WorldRoundStart")}
+}
+
+func newWorldRoundRestart(ti time.Time, r []string) Message {
+	return WorldRoundRestart{
+		Meta:     newMeta(ti, "WorldRoundRestart"),
+		Timeleft: toInt(r[1]),
+	}
 }
 
 func newWorldRoundEnd(ti time.Time, r []string) Message {

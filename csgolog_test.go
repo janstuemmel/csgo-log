@@ -78,17 +78,43 @@ func TestMessages(t *testing.T) {
 		assert(t, u.Raw, "foo")
 	})
 
-	t.Run("WorldMatchStart", func(t *testing.T) {
+	t.Run("ServerMessage", func(t *testing.T) {
 
 		// given
-		l := line(`World triggered "Match_Start" on "de_cache"`)
+		l := line(`server_message: "quit"`)
 
 		// when
 		m, err := Parse(l)
 
 		// then
 		assert(t, nil, err)
-		assert(t, "WorldMatchStart", m.GetType())
+		assert(t, "ServerMessage", m.GetType())
+
+		// when
+		sm, ok := m.(ServerMessage)
+
+		// then
+		assert(t, true, ok)
+		assert(t, "quit", sm.Text)
+	})
+
+	t.Run("FreezTimeStart", func(t *testing.T) {
+
+		// given
+		l := line(`Starting Freeze period`)
+
+		// when
+		m, err := Parse(l)
+
+		// then
+		assert(t, nil, err)
+		assert(t, "FreezTimeStart", m.GetType())
+
+		// when
+		_, ok := m.(FreezTimeStart)
+
+		// then
+		assert(t, true, ok)
 	})
 
 	t.Run("WorldMatchStart", func(t *testing.T) {
@@ -109,6 +135,26 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 		assert(t, "de_cache", ms.Map)
+	})
+
+	t.Run("WorldRoundRestart", func(t *testing.T) {
+
+		// given
+		l := line(`World triggered "Restart_Round_(1_second)`)
+
+		// when
+		m, err := Parse(l)
+
+		// then
+		assert(t, nil, err)
+		assert(t, "WorldRoundRestart", m.GetType())
+
+		// when
+		mr, ok := m.(WorldRoundRestart)
+
+		// then
+		assert(t, true, ok)
+		assert(t, 1, mr.Timeleft)
 	})
 
 	t.Run("WorldRoundStart", func(t *testing.T) {
