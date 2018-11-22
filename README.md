@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/janstuemmel/csgo-log.svg?branch=master)](https://travis-ci.org/janstuemmel/csgo-log)
+[![Build Status](https://travis-ci.org/janstuemmel/csgo-log.svg?branch=master)](https://travis-ci.org/janstuemmel/csgo-log) [![Coverage Status](https://coveralls.io/repos/github/janstuemmel/csgo-log/badge.svg?branch=master)](https://coveralls.io/github/janstuemmel/csgo-log?branch=master)
 
 # csgo-log
 

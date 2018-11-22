@@ -1,4 +1,7 @@
   language: go
   go:
     - "1.11"
-  script: go test -v -cover -bench=.
+  script: go test -v -covermode=count -coverprofile=coverage.out -bench=.
+  after_script:
+    - go get github.com/mattn/goveralls
+    - $GOPATH/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
