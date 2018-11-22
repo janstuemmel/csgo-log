@@ -8,9 +8,19 @@ import (
 	"github.com/janstuemmel/csgo-log"
 )
 
-// Usage
+// Usage:
+//
+// From file:
 // go run main.go example.log
+//
+// From STDIN:
 // cat example.log | go run main.go
+//
+// To File:
+// go run main.go > out.txt
+//
+// Omit errors:
+// go run main.go 2>/dev/null
 
 func main() {
 
