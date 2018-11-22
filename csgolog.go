@@ -407,6 +407,47 @@ var patterns = map[*regexp.Regexp]messageFunc{
 	regexp.MustCompile(GameOverPattern):              newGameOver,
 }
 
+// Parse parses a plain log message and returns
+// message type or error if there's no match
+func Parse(line string) (Message, error) {
+
+	// pattern for date, beginning of a log message
+	result := regexp.MustCompile(`L (\d{2}\/\d{2}\/\d{4} - \d{2}:\d{2}:\d{2}): (.*)`).FindStringSubmatch(line)
+
+	// if result set is empty, parsing failed, return error
+	if result == nil {
+		return nil, ErrorNoMatch
+	}
+
+	// parse time
+	ti, err := time.Parse("01/02/2006 - 15:04:05", result[1])
+
+	// if parsing the date failed, return error
+	if err != nil {
+		return nil, err
+	}
+
+	// check all patterns, return if a pattern matches
+	for re, fun := range patterns {
+		if result := re.FindStringSubmatch(result[2]); result != nil {
+			return fun(ti, result), nil
+		}
+	}
+
+	// if there was no match above but format of the log message was correct
+	// it's a valid logline but pattern is not defined, return unknown type
+	return newUnknown(ti, result[1:]), nil
+}
+
+// ToJSON marshals messages to JSON without escaping html
+func ToJSON(m Message) string {
+	buf := &bytes.Buffer{}
+	enc := json.NewEncoder(buf)
+	enc.SetEscapeHTML(false)
+	enc.Encode(m)
+	return buf.String()
+}
+
 func newMeta(ti time.Time, ty string) Meta {
 	return Meta{
 		Time: ti,
@@ -835,53 +876,11 @@ func newGameOver(ti time.Time, r []string) Message {
 	}
 }
 
-// NewUnknown creates new Unknown object
-func NewUnknown(ti time.Time, r []string) Message {
+func newUnknown(ti time.Time, r []string) Message {
 	return Unknown{
 		Meta: newMeta(ti, "Unknown"),
 		Raw:  r[1],
 	}
-}
-
-// Parse parses a plain log message and returns
-// message type or error if there's no match
-func Parse(line string) (Message, error) {
-
-	// pattern for date, beginning of a log message
-	result := regexp.MustCompile(`L (\d{2}\/\d{2}\/\d{4} - \d{2}:\d{2}:\d{2}): (.*)`).FindStringSubmatch(line)
-
-	// if result set is empty, parsing failed, return error
-	if result == nil {
-		return nil, ErrorNoMatch
-	}
-
-	// parse time
-	ti, err := time.Parse("01/02/2006 - 15:04:05", result[1])
-
-	// if parsing the date failed, return error
-	if err != nil {
-		return nil, err
-	}
-
-	// check all patterns, return if a pattern matches
-	for re, fun := range patterns {
-		if result := re.FindStringSubmatch(result[2]); result != nil {
-			return fun(ti, result), nil
-		}
-	}
-
-	// if there was no match above but format of the log message was correct
-	// it's a valid logline but pattern is not defined, return unknown type
-	return NewUnknown(ti, result[1:]), nil
-}
-
-// ToJSON marshals messages to JSON without escaping html
-func ToJSON(m Message) string {
-	buf := &bytes.Buffer{}
-	enc := json.NewEncoder(buf)
-	enc.SetEscapeHTML(false)
-	enc.Encode(m)
-	return buf.String()
 }
 
 // helpers
