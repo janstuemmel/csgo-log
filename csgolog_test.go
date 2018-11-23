@@ -14,7 +14,7 @@ func ExampleParse() {
 	// a line from a server logfile
 	line := `L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`
 
-	// parse into Message
+	// parse Message
 	msg, _ = Parse(line)
 
 	fmt.Println(msg.GetType())
@@ -26,17 +26,17 @@ func ExampleParse() {
 
 func ExampleToJSON() {
 
-	// parse into Message
+	// parse Message
 	msg, _ := Parse(`L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`)
 
-	// cast Message interface to PlayerPurchase type
+	// cast Message interface type to PlayerPurchase type
 	playerPurchase, _ := msg.(PlayerPurchase)
 
 	fmt.Println(playerPurchase.Player.SteamID)
 	fmt.Println(playerPurchase.Item)
 
-	// get json non-htmlescaped
-	jsn := ToJSON(msg) // csgolog.ToJSON(msg)
+	// get json non-html-escaped
+	jsn := ToJSON(msg)
 
 	fmt.Println(jsn)
 	// Output:

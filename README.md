@@ -6,7 +6,7 @@ Go package for parsing csgo server logfiles. It exports types for csgo logfiles,
 
 ## Usage
 
-For more examples look at the [tests](./csgolog_test.go) and the command-line utility in [examples folder](./examples). Have also a look at [godoc]((http://godoc.org/github.com/janstuemmel/csgo-log)).
+For more examples look at the [tests](./csgolog_test.go) and the command-line utility in [examples folder](./example). Have also a look at [godoc](http://godoc.org/github.com/janstuemmel/csgo-log).
 
 ```go
 package main
