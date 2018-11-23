@@ -2,11 +2,11 @@
 
 # csgo-log
 
-Go package for parsing csgo server logfiles.
+Go package for parsing csgo server logfiles. It exports types for csgo logfiles, their regular expressions, a function for parsing and a function for converting to non-html-escaped JSON. 
 
 ## Usage
 
-For more examples look at the tests.
+For more examples look at the [tests](./csgolog_test.go) and the command-line utility in [examples folder](./examples). Have also a look at [godoc]((http://godoc.org/github.com/janstuemmel/csgo-log)).
 
 ```go
 package main

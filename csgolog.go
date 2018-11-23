@@ -1,3 +1,14 @@
+/*
+
+Package csgolog provides utilities for parsing a csgo server logfile.
+It exports types for csgo logfiles, their regular expressions, a function
+for parsing and a function for converting to non-html-escaped JSON.
+
+Look at the examples for Parse and ToJSON for usage instructions.
+
+You will find a command-line utility in examples folder as well as an
+example logfile with ~3000 lines.
+*/
 package csgolog
 
 import (

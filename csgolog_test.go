@@ -7,53 +7,42 @@ import (
 	"time"
 )
 
-func TestExample(t *testing.T) {
+func ExampleParse() {
 
-	var msg Message // csgolog.Message outside of package scope
+	var msg Message
 
 	// a line from a server logfile
 	line := `L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`
 
 	// parse into Message
-	msg, err := Parse(line) // csgolog.Parse(line)
+	msg, _ = Parse(line)
 
-	if err != nil {
-		panic(err)
-	}
+	fmt.Println(msg.GetType())
+	fmt.Println(msg.GetTime().String())
+	// Output:
+	// PlayerPurchase
+	// 2018-11-05 15:44:36 +0000 UTC
+}
 
-	// fmt.Println(msg.GetType(), msg.GetTime().String())
-	assert(t, "PlayerPurchase", msg.GetType())
-	assert(t, "2018-11-05 15:44:36 +0000 UTC", msg.GetTime().String())
+func ExampleToJSON() {
+
+	// parse into Message
+	msg, _ := Parse(`L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`)
 
 	// cast Message interface to PlayerPurchase type
-	playerPurchase, ok := msg.(PlayerPurchase)
+	playerPurchase, _ := msg.(PlayerPurchase)
 
-	if ok != true {
-		panic("casting failed")
-	}
-
-	// fmt.Println(playerPurchase.Player.SteamID)
-	// fmt.Println(playerPurchase.Item)
-	assert(t, "STEAM_1:1:0101011", playerPurchase.Player.SteamID)
-	assert(t, "m4a1", playerPurchase.Item)
+	fmt.Println(playerPurchase.Player.SteamID)
+	fmt.Println(playerPurchase.Item)
 
 	// get json non-htmlescaped
 	jsn := ToJSON(msg) // csgolog.ToJSON(msg)
 
-	// fmt.Println(jsn)
-	assert(t, strip(`
-	{
-		"time": "2018-11-05T15:44:36Z",
-		"type": "PlayerPurchase",
-		"player": {
-			"name": "Player",
-			"id": 12,
-			"steam_id": "STEAM_1:1:0101011",
-			"side": "CT"
-		},
-		"item": "m4a1"
-	}
-	`), strip(jsn))
+	fmt.Println(jsn)
+	// Output:
+	// STEAM_1:1:0101011
+	// m4a1
+	// {"time":"2018-11-05T15:44:36Z","type":"PlayerPurchase","player":{"name":"Player","id":12,"steam_id":"STEAM_1:1:0101011","side":"CT"},"item":"m4a1"}
 }
 
 func TestMessages(t *testing.T) {
