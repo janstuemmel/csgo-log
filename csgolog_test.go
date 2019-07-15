@@ -2,6 +2,7 @@ package csgolog
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -1031,6 +1032,22 @@ func TestParse(t *testing.T) {
 		// then
 		assert(t, `parsing time "11/50/2018 - 15:44:36": day out of range`, err.Error())
 		assert(t, nil, m)
+	})
+
+	t.Run("parse with patterns", func(t *testing.T) {
+
+		l := `L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`
+
+		patterns := map[*regexp.Regexp]MessageFunc{
+			regexp.MustCompile(PlayerPurchasePattern): NewPlayerPurchase,
+		}
+
+		// parse Message
+		m, err := ParseWithPatterns(l, patterns)
+
+		// then
+		assert(t, nil, err)
+		assert(t, "PlayerPurchase", m.GetType())
 	})
 }
 
