@@ -13,7 +13,7 @@ func ExampleParse() {
 	var msg Message
 
 	// a line from a server logfile
-	line := `L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`
+	line := `L 11/05/2018 - 15:44:36: "Player-Name<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`
 
 	// parse Message
 	msg, _ = Parse(line)
@@ -28,7 +28,7 @@ func ExampleParse() {
 func ExampleToJSON() {
 
 	// parse Message
-	msg, _ := Parse(`L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`)
+	msg, _ := Parse(`L 11/05/2018 - 15:44:36: "Player-Name<12><STEAM_1:1:0101011><CT>" purchased "m4a1"`)
 
 	// cast Message interface type to PlayerPurchase type
 	playerPurchase, _ := msg.(PlayerPurchase)
@@ -43,7 +43,7 @@ func ExampleToJSON() {
 	// Output:
 	// STEAM_1:1:0101011
 	// m4a1
-	// {"time":"2018-11-05T15:44:36Z","type":"PlayerPurchase","player":{"name":"Player","id":12,"steam_id":"STEAM_1:1:0101011","side":"CT"},"item":"m4a1"}
+	// {"time":"2018-11-05T15:44:36Z","type":"PlayerPurchase","player":{"name":"Player-Name","id":12,"steam_id":"STEAM_1:1:0101011","side":"CT"},"item":"m4a1"}
 }
 
 func TestMessages(t *testing.T) {
@@ -189,7 +189,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerPurchase", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`)
 
 		// when
 		m, err := Parse(l)
@@ -203,7 +203,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pp.Player.Name)
+		assert(t, "Player-Name", pp.Player.Name)
 	})
 
 	t.Run("TeamScored TERRORIST", func(t *testing.T) {
@@ -276,7 +276,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerConnected", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><>" connected, address "foo"`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><>" connected, address "foo"`)
 
 		// when
 		m, err := Parse(l)
@@ -290,7 +290,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pc.Player.Name)
+		assert(t, "Player-Name", pc.Player.Name)
 		assert(t, 12, pc.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pc.Player.SteamID)
 		assert(t, "foo", pc.Address)
@@ -299,7 +299,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerDisconnected", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" disconnected (reason "Kicked by Console : For killing a teammate at round start")`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" disconnected (reason "Kicked by Console : For killing a teammate at round start")`)
 
 		// when
 		m, err := Parse(l)
@@ -313,7 +313,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pd.Player.Name)
+		assert(t, "Player-Name", pd.Player.Name)
 		assert(t, 12, pd.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pd.Player.SteamID)
 		assert(t, "Kicked by Console : For killing a teammate at round start", pd.Reason)
@@ -322,7 +322,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerEntered", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><>" entered the game`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><>" entered the game`)
 
 		// when
 		m, err := Parse(l)
@@ -336,7 +336,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pe.Player.Name)
+		assert(t, "Player-Name", pe.Player.Name)
 		assert(t, 12, pe.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pe.Player.SteamID)
 	})
@@ -344,7 +344,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerSwitched", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011>" switched from team <TERRORIST> to <Unassigned>`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011>" switched from team <TERRORIST> to <Unassigned>`)
 
 		// when
 		m, err := Parse(l)
@@ -358,7 +358,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", ps.Player.Name)
+		assert(t, "Player-Name", ps.Player.Name)
 		assert(t, 12, ps.Player.ID)
 		assert(t, "STEAM_1:1:0101011", ps.Player.SteamID)
 		assert(t, "TERRORIST", ps.From)
@@ -368,7 +368,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerSay", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" say_team ".ready"`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" say_team ".ready"`)
 
 		// when
 		m, err := Parse(l)
@@ -382,7 +382,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", ps.Player.Name)
+		assert(t, "Player-Name", ps.Player.Name)
 		assert(t, 12, ps.Player.ID)
 		assert(t, "STEAM_1:1:0101011", ps.Player.SteamID)
 		assert(t, ".ready", ps.Text)
@@ -392,7 +392,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerKill", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" [-225 -1829 -168] killed "Zim<20><BOT><CT>" [-476 -1709 -110] with "glock"`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" [-225 -1829 -168] killed "Zim<20><BOT><CT>" [-476 -1709 -110] with "glock"`)
 
 		// when
 		m, err := Parse(l)
@@ -407,7 +407,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pk.Attacker.Name)
+		assert(t, "Player-Name", pk.Attacker.Name)
 		assert(t, 12, pk.Attacker.ID)
 		assert(t, "STEAM_1:1:0101011", pk.Attacker.SteamID)
 
@@ -431,7 +431,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerKill Headshot Penetrated", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" [-225 -1829 -168] killed "Zim<20><BOT><CT>" [-476 -1709 -110] with "glock" (headshot penetrated)`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" [-225 -1829 -168] killed "Zim<20><BOT><CT>" [-476 -1709 -110] with "glock" (headshot penetrated)`)
 
 		// when
 		m, err := Parse(l)
@@ -446,7 +446,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pk.Attacker.Name)
+		assert(t, "Player-Name", pk.Attacker.Name)
 		assert(t, 12, pk.Attacker.ID)
 		assert(t, "STEAM_1:1:0101011", pk.Attacker.SteamID)
 
@@ -470,7 +470,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerKillAssist", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<10><STEAM_1:1:0101010><CT>" assisted killing "Player<12><STEAM_1:1:0101011><TERRORIST>"`)
+		l := line(`"Player-Name<10><STEAM_1:1:0101010><CT>" assisted killing "Player-Name<12><STEAM_1:1:0101011><TERRORIST>"`)
 
 		// when
 		m, err := Parse(l)
@@ -485,11 +485,11 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pk.Attacker.Name)
+		assert(t, "Player-Name", pk.Attacker.Name)
 		assert(t, 10, pk.Attacker.ID)
 		assert(t, "STEAM_1:1:0101010", pk.Attacker.SteamID)
 
-		assert(t, "Player", pk.Victim.Name)
+		assert(t, "Player-Name", pk.Victim.Name)
 		assert(t, 12, pk.Victim.ID)
 		assert(t, "STEAM_1:1:0101011", pk.Victim.SteamID)
 	})
@@ -497,7 +497,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerAttack", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" [480 -67 1782] attacked "Jon<9><BOT><CT>" [-134 362 1613] with "ak47" (damage "27") (damage_armor "3") (health "73") (armor "96") (hitgroup "chest")`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" [480 -67 1782] attacked "Jon<9><BOT><CT>" [-134 362 1613] with "ak47" (damage "27") (damage_armor "3") (health "73") (armor "96") (hitgroup "chest")`)
 
 		// when
 		m, err := Parse(l)
@@ -512,7 +512,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pa.Attacker.Name)
+		assert(t, "Player-Name", pa.Attacker.Name)
 		assert(t, 2, pa.Attacker.ID)
 		assert(t, "STEAM_1:1:0101011", pa.Attacker.SteamID)
 
@@ -539,7 +539,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerKilledBomb", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" [480 -67 1782] was killed by the bomb.`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" [480 -67 1782] was killed by the bomb.`)
 
 		// when
 		m, err := Parse(l)
@@ -554,7 +554,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pk.Player.Name)
+		assert(t, "Player-Name", pk.Player.Name)
 		assert(t, 2, pk.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pk.Player.SteamID)
 
@@ -566,7 +566,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerKilledSuicide", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" [480 -67 1782] committed suicide with "hegrenade"`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" [480 -67 1782] committed suicide with "hegrenade"`)
 
 		// when
 		m, err := Parse(l)
@@ -581,7 +581,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pk.Player.Name)
+		assert(t, "Player-Name", pk.Player.Name)
 		assert(t, 2, pk.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pk.Player.SteamID)
 
@@ -595,7 +595,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerPickedUp", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" picked up "ump45"`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" picked up "ump45"`)
 
 		// when
 		m, err := Parse(l)
@@ -610,7 +610,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pp.Player.Name)
+		assert(t, "Player-Name", pp.Player.Name)
 		assert(t, 2, pp.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pp.Player.SteamID)
 
@@ -620,7 +620,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerDropped", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" dropped "knife"`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" dropped "knife"`)
 
 		// when
 		m, err := Parse(l)
@@ -635,7 +635,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pd.Player.Name)
+		assert(t, "Player-Name", pd.Player.Name)
 		assert(t, 2, pd.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pd.Player.SteamID)
 
@@ -645,7 +645,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerMoneyChange Sub", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" money change 2050-1000 = $1050 (tracked) (purchase: item_assaultsuit)`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" money change 2050-1000 = $1050 (tracked) (purchase: item_assaultsuit)`)
 
 		// when
 		m, err := Parse(l)
@@ -660,7 +660,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pm.Player.Name)
+		assert(t, "Player-Name", pm.Player.Name)
 		assert(t, 2, pm.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pm.Player.SteamID)
 
@@ -673,7 +673,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerMoneyChange Add", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" money change 7700+300 = $8000 (tracked)`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" money change 7700+300 = $8000 (tracked)`)
 
 		// when
 		m, err := Parse(l)
@@ -688,7 +688,7 @@ func TestMessages(t *testing.T) {
 		// then
 		assert(t, true, ok)
 
-		assert(t, "Player", pm.Player.Name)
+		assert(t, "Player-Name", pm.Player.Name)
 		assert(t, 2, pm.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pm.Player.SteamID)
 
@@ -701,9 +701,9 @@ func TestMessages(t *testing.T) {
 
 		// given
 		lines := map[string]string{
-			"PlayerBombGot":     line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" triggered "Got_The_Bomb"`),
-			"PlayerBombPlanted": line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" triggered "Planted_The_Bomb"`),
-			"PlayerBombDropped": line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" triggered "Dropped_The_Bomb"`),
+			"PlayerBombGot":     line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" triggered "Got_The_Bomb"`),
+			"PlayerBombPlanted": line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" triggered "Planted_The_Bomb"`),
+			"PlayerBombDropped": line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" triggered "Dropped_The_Bomb"`),
 		}
 
 		for msg, l := range lines {
@@ -721,8 +721,8 @@ func TestMessages(t *testing.T) {
 
 		// given
 		lines := map[string]string{
-			"PlayerBombBeginDefuse": line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" triggered "Begin_Bomb_Defuse_Without_Kit"`),
-			"PlayerBombDefused":     line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" triggered "Defused_The_Bomb"`),
+			"PlayerBombBeginDefuse": line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" triggered "Begin_Bomb_Defuse_Without_Kit"`),
+			"PlayerBombDefused":     line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" triggered "Defused_The_Bomb"`),
 		}
 
 		for msg, l := range lines {
@@ -739,7 +739,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerBomb CT With Kit", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><CT>" triggered "Begin_Bomb_Defuse_With_Kit"`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><CT>" triggered "Begin_Bomb_Defuse_With_Kit"`)
 
 		// when
 		m, err := Parse(l)
@@ -753,7 +753,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pb.Player.Name)
+		assert(t, "Player-Name", pb.Player.Name)
 		assert(t, 2, pb.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pb.Player.SteamID)
 		assert(t, "CT", pb.Player.Side)
@@ -763,7 +763,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerBomb CT Without Kit", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<2><STEAM_1:1:0101011><CT>" triggered "Begin_Bomb_Defuse_Without_Kit"`)
+		l := line(`"Player-Name<2><STEAM_1:1:0101011><CT>" triggered "Begin_Bomb_Defuse_Without_Kit"`)
 
 		// when
 		m, err := Parse(l)
@@ -777,7 +777,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pb.Player.Name)
+		assert(t, "Player-Name", pb.Player.Name)
 		assert(t, 2, pb.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pb.Player.SteamID)
 		assert(t, "CT", pb.Player.Side)
@@ -787,7 +787,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerThrew", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" threw smokegrenade [-716 -1636 -170]`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" threw smokegrenade [-716 -1636 -170]`)
 
 		// when
 		m, err := Parse(l)
@@ -801,7 +801,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pt.Player.Name)
+		assert(t, "Player-Name", pt.Player.Name)
 		assert(t, 12, pt.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pt.Player.SteamID)
 		assert(t, "TERRORIST", pt.Player.Side)
@@ -817,7 +817,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerThrew Flashbang", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" threw flashbang [-716 -1636 -170] flashbang entindex 163)`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" threw flashbang [-716 -1636 -170] flashbang entindex 163)`)
 
 		// when
 		m, err := Parse(l)
@@ -831,7 +831,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pt.Player.Name)
+		assert(t, "Player-Name", pt.Player.Name)
 		assert(t, 12, pt.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pt.Player.SteamID)
 		assert(t, "TERRORIST", pt.Player.Side)
@@ -847,7 +847,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerBlinded", func(t *testing.T) {
 
 		// given
-		l := line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" blinded for 3.45 by "Player<10><STEAM_1:1:0101010><CT>" from flashbang entindex 163`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" blinded for 3.45 by "Player-Name<10><STEAM_1:1:0101010><CT>" from flashbang entindex 163`)
 
 		// when
 		m, err := Parse(l)
@@ -861,7 +861,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pb.Victim.Name)
+		assert(t, "Player-Name", pb.Victim.Name)
 		assert(t, 12, pb.Victim.ID)
 		assert(t, "STEAM_1:1:0101011", pb.Victim.SteamID)
 		assert(t, "TERRORIST", pb.Victim.Side)
@@ -869,7 +869,7 @@ func TestMessages(t *testing.T) {
 		assert(t, float32(3.45), pb.For)
 		assert(t, 163, pb.Entindex)
 
-		assert(t, "Player", pb.Attacker.Name)
+		assert(t, "Player-Name", pb.Attacker.Name)
 		assert(t, 10, pb.Attacker.ID)
 		assert(t, "STEAM_1:1:0101010", pb.Attacker.SteamID)
 		assert(t, "CT", pb.Attacker.Side)
@@ -930,7 +930,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerBanned", func(t *testing.T) {
 
 		// given
-		l := line(`Banid: "Player<12><STEAM_1:1:0101011><>" was banned "for 15.00 minutes" by "Console"`)
+		l := line(`Banid: "Player-Name<12><STEAM_1:1:0101011><>" was banned "for 15.00 minutes" by "Console"`)
 
 		// when
 		m, err := Parse(l)
@@ -944,7 +944,7 @@ func TestMessages(t *testing.T) {
 
 		// then
 		assert(t, true, ok)
-		assert(t, "Player", pb.Player.Name)
+		assert(t, "Player-Name", pb.Player.Name)
 		assert(t, 12, pb.Player.ID)
 		assert(t, "STEAM_1:1:0101011", pb.Player.SteamID)
 		assert(t, "for 15.00 minutes", pb.Duration)
@@ -957,12 +957,12 @@ func TestToJSON(t *testing.T) {
 	t.Run("Message to json", func(t *testing.T) {
 
 		// given
-		m, _ := Parse(line(`"Player<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`))
+		m, _ := Parse(line(`"Player-Name<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`))
 		expected := strip(`{
 				"time": "2018-11-05T15:44:36Z",
 				"type": "PlayerPurchase",
 				"player": {
-					"name": 		"Player",
+					"name": 		"Player-Name",
 					"id": 			12,
 					"steam_id": "STEAM_1:1:0101011",
 					"side": 		"TERRORIST"
@@ -996,7 +996,7 @@ func TestParse(t *testing.T) {
 	t.Run("time and type", func(t *testing.T) {
 
 		// given
-		l := `L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`
+		l := `L 11/05/2018 - 15:44:36: "Player-Name<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`
 
 		// when
 		m, err := Parse(l)
@@ -1024,7 +1024,7 @@ func TestParse(t *testing.T) {
 
 		// given
 		// day 50 out of range
-		l := `L 11/50/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`
+		l := `L 11/50/2018 - 15:44:36: "Player-Name<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`
 
 		// when
 		m, err := Parse(l)
@@ -1036,7 +1036,7 @@ func TestParse(t *testing.T) {
 
 	t.Run("parse with patterns", func(t *testing.T) {
 
-		l := `L 11/05/2018 - 15:44:36: "Player<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`
+		l := `L 11/05/2018 - 15:44:36: "Player-Name<12><STEAM_1:1:0101011><TERRORIST>" purchased "m4a1"`
 
 		patterns := map[*regexp.Regexp]MessageFunc{
 			regexp.MustCompile(PlayerPurchasePattern): NewPlayerPurchase,
@@ -1086,14 +1086,14 @@ func BenchmarkFirstEntry(b *testing.B) {
 func BenchmarkMidEntry(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		// worst case: type unknown
-		Parse(line(`"Player<2><STEAM_1:1:0101011><TERRORIST>" [480 -67 1782] attacked "Jon<9><BOT><CT>" [-134 362 1613] with "ak47" (damage "27") (damage_armor "3") (health "73") (armor "96") (hitgroup "chest")`))
+		Parse(line(`"Player-Name<2><STEAM_1:1:0101011><TERRORIST>" [480 -67 1782] attacked "Jon<9><BOT><CT>" [-134 362 1613] with "ak47" (damage "27") (damage_armor "3") (health "73") (armor "96") (hitgroup "chest")`))
 	}
 }
 
 func BenchmarkUnknown(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		// worst case: type unknown
-		Parse(line(`"Player<12><STEAM_1:1:0101010><CT>" [-854 396 -286] does FOO BAR BAZ`))
+		Parse(line(`"Player-Name<12><STEAM_1:1:0101010><CT>" [-854 396 -286] does FOO BAR BAZ`))
 	}
 }
 
