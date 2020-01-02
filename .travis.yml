@@ -1,6 +1,6 @@
 language: go
 go:
-- '1.11'
+- '1.13'
 script: go test -v -covermode=count -coverprofile=coverage.out -bench=.
 after_success:
 - go get github.com/mattn/goveralls
