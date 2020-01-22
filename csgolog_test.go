@@ -344,7 +344,7 @@ func TestMessages(t *testing.T) {
 	t.Run("PlayerSwitched", func(t *testing.T) {
 
 		// given
-		l := line(`"Player-Name<12><STEAM_1:1:0101011>" switched from team <TERRORIST> to <Unassigned>`)
+		l := line(`"Player-Name<12><STEAM_1:1:0101011>" switched from team <TERRORIST> to <Spectator>`)
 
 		// when
 		m, err := Parse(l)
@@ -362,7 +362,7 @@ func TestMessages(t *testing.T) {
 		assert(t, 12, ps.Player.ID)
 		assert(t, "STEAM_1:1:0101011", ps.Player.SteamID)
 		assert(t, "TERRORIST", ps.From)
-		assert(t, "Unassigned", ps.To)
+		assert(t, "Spectator", ps.To)
 	})
 
 	t.Run("PlayerSay", func(t *testing.T) {

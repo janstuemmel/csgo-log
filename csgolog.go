@@ -368,7 +368,7 @@ const (
 	// PlayerBannedPattern regular expression
 	PlayerBannedPattern = `Banid: "(.+)<(\d+)><([\w:]+)><\w*>" was banned "([\w. ]+)" by "(\w+)"`
 	// PlayerSwitchedPattern regular expression
-	PlayerSwitchedPattern = `"(.+)<(\d+)><([\w:]+)>" switched from team <(Unassigned|TERRORIST|CT)> to <(Unassigned|TERRORIST|CT)>`
+	PlayerSwitchedPattern = `"(.+)<(\d+)><([\w:]+)>" switched from team <(Unassigned|Spectator|TERRORIST|CT)> to <(Unassigned|Spectator|TERRORIST|CT)>`
 	// PlayerSayPattern regular expression
 	PlayerSayPattern = `"(.+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" say(_team)? "(.*)"`
 	// PlayerPurchasePattern regular expression
