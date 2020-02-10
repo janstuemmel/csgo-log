@@ -354,6 +354,24 @@ type (
 		Stage            string `json:"stage,omitempty"`
 	}
 
+	Rcon struct {
+		Meta
+		IP      string `json:"ip"`
+		Port    uint   `json:"port"`
+		Command string `json:"command"`
+	}
+
+	// PlayerKillOther is received when a player destroys map resources
+	PlayerKillOther struct {
+		Meta
+		Attacker         Player   `json:"attacker"`
+		AttackerPosition Position `json:"attacker_pos"`
+		Victim           string   `json:"victim"`
+		VictimID         string   `json:"victim_id"`
+		VictimPosition   Position `json:"victim_pos"`
+		Weapon           string   `json:"weapon"`
+	}
+
 	// Unknown holds the raw log message of a message
 	// that is not defined in patterns but starts with time
 	Unknown struct {
@@ -445,6 +463,17 @@ const (
 	ServerCvarPattern = `server_cvar: "(\w+)" "(.*)"`
 	// Get5EventPattern regular expression
 	Get5EventPattern = `get5_event: {"matchid(.*)":"(\w*)","params":(.*),"event":"(series_start|map_veto|map_pick|side_picked|knife_start|knife_won|going_live|player_death|round_end|side_swap|map_end|series_end|backup_loaded|match_config_load_fail|client_say|bomb_planted|bomb_defused|bomb_exploded|player_connect|player_disconnect|team_ready|team_unready)"}`
+	// RconEventPattern regular expression
+	RconEventPattern = `rcon from "(.*):(\d+)": command "(.*)"`
+	// PlayerKillOtherPattern regular expression
+	PlayerKillOtherPattern = `"(.+)<(\d+)><([\w:]+)><(TERRORIST|CT)>" \[(-?\d+) (-?\d+) (-?\d+)\] killed other "(.+)<(\d+)>" \[(-?\d+) (-?\d+) (-?\d+)\] with "(\w+)"`
+	// TODO // VoteStartPattern = `Vote started "StartTimeOut " from #2 "416<16><STEAM_1:1:55894410><TERRORIST><Area 4>"`
+	// TODO // VoteCastPattern = `Vote cast "StartTimeOut " from #2 "416<16><STEAM_1:1:55894410><TERRORIST><Area 4>" option0`
+	// TODO // VoteSuccessPattern = `Vote cast "StartTimeOut " from #2 "416<16><STEAM_1:1:55894410><TERRORIST><Area 4>`
+	// TODO // MatchPauseEnablePattern = `Match pause is enabled - TimeOutTs`
+	// TODO // MatchPauseEnablePattern = `Match pause is enabled - mp_pause_match`
+	// TODO // MatchPauseDisablePattern = `Match pause is disabled - TimeOutTs`
+	// TODO // MatchPauseDisablePattern = `Match pause is disabled - mp_unpause_match`
 )
 
 var DefaultPatterns = map[*regexp.Regexp]MessageFunc{
@@ -483,6 +512,8 @@ var DefaultPatterns = map[*regexp.Regexp]MessageFunc{
 	regexp.MustCompile(GameOverPattern):              NewGameOver,
 	regexp.MustCompile(ServerCvarPattern):            NewServerCvar,
 	regexp.MustCompile(Get5EventPattern):             NewGet5Event,
+	regexp.MustCompile(RconEventPattern):             NewRconEvent,
+	regexp.MustCompile(PlayerKillOtherPattern):       NewPlayerKillOther,
 }
 
 // Parse parses a plain log message and returns
@@ -985,6 +1016,7 @@ func NewServerCvar(ti time.Time, r []string) Message {
 		Value: r[2],
 	}
 }
+
 func NewGet5Event(ti time.Time, r []string) Message {
 	// r[1]=ignored, r[2]=matchid, r[3]=params r[4]=event
 	get5event := Get5Event{
@@ -997,6 +1029,45 @@ func NewGet5Event(ti time.Time, r []string) Message {
 		return nil
 	}
 	return get5event
+}
+
+func NewRconEvent(ti time.Time, r []string) Message {
+	// r[1]=ip r[2]=port r[3]=command
+	p, err := strconv.Atoi(r[2])
+	if err != nil {
+		return NewUnknown(ti, r)
+	}
+	return Rcon{
+		Meta:    NewMeta(ti, "Rcon"),
+		IP:      r[1],
+		Port:    uint(p),
+		Command: r[3],
+	}
+}
+
+func NewPlayerKillOther(ti time.Time, r []string) Message {
+	return PlayerKillOther{
+		Meta: NewMeta(ti, "PlayerKillOther"),
+		Attacker: Player{
+			Name:    r[1],
+			ID:      toInt(r[2]),
+			SteamID: r[3],
+			Side:    r[4],
+		},
+		AttackerPosition: Position{
+			X: toInt(r[5]),
+			Y: toInt(r[6]),
+			Z: toInt(r[7]),
+		},
+		Victim:   r[8],
+		VictimID: r[9],
+		VictimPosition: Position{
+			X: toInt(r[10]),
+			Y: toInt(r[11]),
+			Z: toInt(r[12]),
+		},
+		Weapon: r[13],
+	}
 }
 
 func NewUnknown(ti time.Time, r []string) Message {
