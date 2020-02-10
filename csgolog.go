@@ -1026,7 +1026,7 @@ func NewGet5Event(ti time.Time, r []string) Message {
 		Event:   r[4],
 	}
 	if err := json.Unmarshal([]byte(r[3]), &get5event.Params); err != nil {
-		return nil
+		return NewUnknown(ti, r)
 	}
 	return get5event
 }
