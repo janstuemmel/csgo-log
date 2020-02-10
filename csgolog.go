@@ -337,11 +337,21 @@ type (
 	}
 
 	Get5EventParams struct {
-		Client    string `json:"client"`
-		MapNumber int    `json:"map_number"`
-		MapName   string `json:"map_name"`
-		Team1Name string `json:"team1_name"`
-		Team2Name string `json:"team2_name"`
+		MapNumber        int    `json:"map_number,omitempty"`
+		MapName          string `json:"map_name,omitempty"`
+		Team1Name        string `json:"team1_name,omitempty"`
+		Team1Score       int    `json:"team1_score,omitempty"`
+		Team1SeriesScore int    `json:"team1_series_score,omitempty"`
+		Team2Name        string `json:"team2_name,omitempty"`
+		Team2Score       int    `json:"team2_score,omitempty"`
+		Team2SeriesScore int    `json:"team2_series_score,omitempty"`
+		Headshot         string `json:"headshot,omitempty"`
+		Weapon           string `json:"weapon,omitempty"`
+		Reason           int    `json:"reason,omitempty"`
+		Message          string `json:"message,omitempty"`
+		File             string `json:"file,omitempty"`
+		Site             int    `json:"site,omitempty"`
+		Stage            string `json:"stage,omitempty"`
 	}
 
 	// Unknown holds the raw log message of a message
@@ -433,7 +443,6 @@ const (
 	GameOverPattern = `Game Over: (\w+) (\w+) (\w+) score (\d+):(\d+) after (\d+) min`
 	// ServerCvarPattern regular expression
 	ServerCvarPattern = `server_cvar: "(\w+)" "(.*)"`
-
 	// Get5EventPattern regular expression
 	Get5EventPattern = `get5_event: {"matchid(.*)":"(\w*)","params":(.*),"event":"(series_start|map_veto|map_pick|side_picked|knife_start|knife_won|going_live|player_death|round_end|side_swap|map_end|series_end|backup_loaded|match_config_load_fail|client_say|bomb_planted|bomb_defused|bomb_exploded|player_connect|player_disconnect|team_ready|team_unready)"}`
 )
