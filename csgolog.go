@@ -27,6 +27,9 @@ var ErrorNoMatch = errors.New("no match")
 // LogLinePattern is the regular expression to capture a line of a logfile
 var LogLinePattern = regexp.MustCompile(`L (\d{2}\/\d{2}\/\d{4} - \d{2}:\d{2}:\d{2}): (.*)`)
 
+// HTTPLinePattern is the regular expression to capture a line of a HTTP logging
+var HTTPLinePattern = regexp.MustCompile(`(\d{2}\/\d{2}\/\d{4} - \d{2}:\d{2}:\d{2}.\d{3}) - (.*)`)
+
 type (
 
 	// Player holds the information about a player known from log
@@ -320,6 +323,27 @@ type (
 		Duration int    `json:"duration"`
 	}
 
+	ServerCvar struct {
+		Meta
+		Key   string `json:"mode"`
+		Value string `json:"value"`
+	}
+
+	Get5Event struct {
+		Meta
+		Matchid string          `json:"matchid"`
+		Params  Get5EventParams `json:"params"`
+		Event   string          `json:"event"`
+	}
+
+	Get5EventParams struct {
+		Client    string `json:"client"`
+		MapNumber int    `json:"map_number"`
+		MapName   string `json:"map_name"`
+		Team1Name string `json:"team1_name"`
+		Team2Name string `json:"team2_name"`
+	}
+
 	// Unknown holds the raw log message of a message
 	// that is not defined in patterns but starts with time
 	Unknown struct {
@@ -407,6 +431,11 @@ const (
 	ProjectileSpawnedPattern = `Molotov projectile spawned at (-?\d+\.\d+) (-?\d+\.\d+) (-?\d+\.\d+), velocity (-?\d+\.\d+) (-?\d+\.\d+) (-?\d+\.\d+)`
 	// GameOverPattern regular expression
 	GameOverPattern = `Game Over: (\w+) (\w+) (\w+) score (\d+):(\d+) after (\d+) min`
+	// ServerCvarPattern regular expression
+	ServerCvarPattern = `server_cvar: "(\w+)" "(.*)"`
+
+	// Get5EventPattern regular expression
+	Get5EventPattern = `get5_event: {"matchid(.*)":"(\w*)","params":(.*),"event":"(series_start|map_veto|map_pick|side_picked|knife_start|knife_won|going_live|player_death|round_end|side_swap|map_end|series_end|backup_loaded|match_config_load_fail|client_say|bomb_planted|bomb_defused|bomb_exploded|player_connect|player_disconnect|team_ready|team_unready)"}`
 )
 
 var DefaultPatterns = map[*regexp.Regexp]MessageFunc{
@@ -443,6 +472,8 @@ var DefaultPatterns = map[*regexp.Regexp]MessageFunc{
 	regexp.MustCompile(PlayerBlindedPattern):         NewPlayerBlinded,
 	regexp.MustCompile(ProjectileSpawnedPattern):     NewProjectileSpawned,
 	regexp.MustCompile(GameOverPattern):              NewGameOver,
+	regexp.MustCompile(ServerCvarPattern):            NewServerCvar,
+	regexp.MustCompile(Get5EventPattern):             NewGet5Event,
 }
 
 // Parse parses a plain log message and returns
@@ -936,6 +967,27 @@ func NewGameOver(ti time.Time, r []string) Message {
 		ScoreT:   toInt(r[5]),
 		Duration: toInt(r[6]),
 	}
+}
+
+func NewServerCvar(ti time.Time, r []string) Message {
+	return ServerCvar{
+		Meta:  NewMeta(ti, "ServerCvar"),
+		Key:   r[1],
+		Value: r[2],
+	}
+}
+func NewGet5Event(ti time.Time, r []string) Message {
+	// r[1]=ignored, r[2]=matchid, r[3]=params r[4]=event
+	get5event := Get5Event{
+		Meta:    NewMeta(ti, "Get5Event"),
+		Matchid: r[2],
+		Params:  Get5EventParams{},
+		Event:   r[4],
+	}
+	if err := json.Unmarshal([]byte(r[3]), &get5event.Params); err != nil {
+		return nil
+	}
+	return get5event
 }
 
 func NewUnknown(ti time.Time, r []string) Message {
