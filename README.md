@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/janstuemmel/csgo-log.svg?branch=master)](https://travis-ci.org/janstuemmel/csgo-log) [![Coverage Status](https://coveralls.io/repos/github/janstuemmel/csgo-log/badge.svg?branch=master)](https://coveralls.io/github/janstuemmel/csgo-log?branch=master) [![Godoc](https://godoc.org/github.com/janstuemmel/csgo-log?status.svg)](http://godoc.org/github.com/janstuemmel/csgo-log)
-
 # csgo-log
 
 Go package for parsing csgo server logfiles. It exports types for csgo logfiles, their regular expressions, a function for parsing and a function for converting to non-html-escaped JSON. 

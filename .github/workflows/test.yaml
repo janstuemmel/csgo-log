@@ -1,0 +1,12 @@
+name: Test
+on:
+  push:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run unit tests, coverage and benchmark
+        run: go test -v -covermode=count -coverprofile=coverage.out -bench=.
